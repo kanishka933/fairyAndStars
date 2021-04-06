@@ -1,27 +1,68 @@
+var starImg, fairyImg, bgImg;
+var fairy , fairyVoice;
+var star, starBody;
+
 const Engine = Matter.Engine;
-const World= Matter.World;
+const World = Matter.World;
 const Bodies = Matter.Bodies;
+const Body = Matter.Body;
 
-var engine, world;
-var box1;
+function preload()
+{
+	starImg = loadImage("images/star.png");
+	fairyImg = loadAnimation("images/fairyImage1.png","images/fairyImage2.png");
+	bgImg = loadImage("images/starNight.png");
+	fairyVoice = loadSound("sound/JoyMusic.mp3");
 
-function setup(){
-    var canvas = createCanvas(400,400);
-    engine = Engine.create();
-    world = engine.world;
-
-    box1 = new Box(200,300,50,50);
-    box2 = new Box(240,100,50,100);
-    ground = new Ground(200,height,400,20)
 }
 
-function draw(){
-    background(0);
-    Engine.update(engine);
-    console.log(box2.body.position.x);
-    console.log(box2.body.position.y);
-    console.log(box2.body.angle);
-    box1.display();
-    box2.display();
-    ground.display();
+function setup() {
+	createCanvas(800, 750);
+
+	// fairyVoice.play();
+
+	fairy = createSprite(130, 520);
+	fairy.addAnimation("fairyflying",fairyImg);  
+	fairy.scale =0.25;
+
+	star = createSprite(650,30);
+	star.addImage(starImg);
+	star.scale = 0.2;
+
+	engine = Engine.create();
+	world = engine.world;
+
+	starBody = Bodies.circle(650 , 30 , 5 , {restitution:0.5, isStatic:true});
+	World.add(world, starBody);
+	
+	Engine.run(engine);
+
+}
+
+
+function draw() {
+	Engine.update(engine);
+	background(bgImg);
+
+	star.x = starBody.position.x;
+	star.y = starBody.position.y;
+	
+	if(starBody.position.y > 470){
+		Body.setStatic(starBody,true);
+	}
+
+	drawSprites();
+
+}
+
+function keyPressed() {
+	if(keyCode === LEFT_ARROW){
+		fairy.x = fairy.x - 15;
+	}
+	if(keyCode === RIGHT_ARROW){
+		fairy.x = fairy.x + 15;
+	}
+	if(keyCode === DOWN_ARROW){
+		Body.setStatic(starBody,false);
+	}
 }
